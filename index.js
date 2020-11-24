@@ -27,7 +27,7 @@ async function startTest ( driver ) {
             startTest(driver)
         }
         
-    }, 1000)
+    }, 5000)
     
 }
 ///html/body/div[6]/div[1]/div[2]/div[2]/form/div[2]
@@ -37,12 +37,13 @@ async function answerMachine (driver) {
             let elements
             elements = await (await driver.findElements(By.className('question')));
             let success
-            let exit_button
+            let start_button
             try{
+                start_button = await (await driver.findElement(By.className('button-blue-long start-testing')))
                 success = await (await driver.findElement(By.className('success')));
             }
             catch (e) {
-                console.log("результата ещё нет")
+
             }
             if( elements.length ){
                 const firstClick = parseInt( Math.random() * 4 );
@@ -61,29 +62,30 @@ async function answerMachine (driver) {
                 const size = await (await success.getRect())
                 console.log(size.width)
                   if (size.width < 400){
-                      const close_button = await (await driver.findElement(By.id('DOMWindowClose')))
-                      console.log(close_button)
-                      close_button.click()
-                       setTimeout(async ()=>{
-                           const buttons = await(await driver.findElements(By.className('ui-button-text')))
-                           buttons[0].click()
-                           openTest(driver)
-                      },1000);
+                    const close_button = await (await driver.findElement(By.id('DOMWindowClose')))
+                    console.log(close_button)
+                    close_button.click()
+                    setTimeout(async ()=>{
+                        const buttons = await(await driver.findElements(By.className('ui-button-text')))
+                        buttons[0].click()
+                        openTest(driver)
+                    },1000);
+                    return
                 }
             }
             else {
-                exit_button = await(await driver.findElement(By.className('button-blue-small testing-exit')));
-                console.log(exit_button);
-                exit_button.click()
+                const close_button = await (await driver.findElement(By.id('DOMWindowClose')))
+                console.log(close_button)
+                close_button.click()
                 setTimeout(async ()=>{
                     const buttons = await(await driver.findElements(By.className('ui-button-text')))
                     buttons[0].click()
                     openTest(driver)
-               },1000);
+                },1000);
+                return
             }
         }
         catch ( error ) {
-            console.log(error)
             answerMachine(driver)
         }
     }, 100)
